@@ -1,0 +1,93 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: flux
+  namespace: helloworld
+rules:
+  # create the resources for our service (and more, but resourceNames cannot be used with create)
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - create
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - create
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - create
+
+  # manage the resources for our service
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    resourceNames:
+      - echoserver
+    verbs:
+      - get
+      - patch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    resourceNames:
+      - echoserver
+    verbs:
+      - get
+      - patch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    resourceNames:
+      - echoserver
+    verbs:
+      - get
+      - patch
+
+  # get namespace or Flux will mark it as inaccessible
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    resourceNames:
+      - helloworld
+    verbs:
+      - get
+
+  # discover controllers
+  # Flux will complain if any of those are missing when running list-images or list-controllers
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+      - statefulsets
+    verbs:
+      - list
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+    verbs:
+      - list
+  - apiGroups:
+      - flux.weave.works
+    resources:
+      - helmreleases
+    verbs:
+      - list
+  - apiGroups:
+      - helm.integrations.flux.weave.works
+    resources:
+      - fluxhelmreleases
+    verbs:
+      - list

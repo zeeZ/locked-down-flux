@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: memcached
+  namespace: flux-system
+  labels:
+    app: flux
+spec:
+  podSelector:
+    matchLabels:
+      app: flux
+      component: memcached
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: flux
+              component: weave-flux
+      ports:
+        - protocol: TCP
+          port: 11211

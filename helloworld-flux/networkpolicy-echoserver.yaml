@@ -1,0 +1,20 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: echoserver
+  namespace: helloworld
+  labels:
+    app: echoserver
+spec:
+  podSelector:
+    matchLabels:
+      app: echoserver
+      component: echoserver
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 8080

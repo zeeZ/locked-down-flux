@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: flux
+  namespace: flux-system
+  labels:
+    app: flux
+spec:
+  podSelector:
+    matchLabels:
+      app: flux
+      component: weave-flux
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from: [] # add prometheus
+      ports:
+        - protocol: TCP
+          port: 3030
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: flux
+              component: memcached
+      ports:
+        - protocol: TCP
+          port: 11211
+    - {} # add git host and image registry

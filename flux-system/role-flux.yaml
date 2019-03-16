@@ -1,0 +1,18 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: flux
+  namespace: flux-system
+  labels:
+    app: flux
+rules:
+  # ssh key generation during first run
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    resourceNames:
+      - flux-git-deploy
+    verbs:
+      - patch

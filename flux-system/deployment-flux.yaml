@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flux
+  namespace: flux-system
+  labels:
+    app: flux
+    component: weave-flux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flux
+      component: weave-flux
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io.port: "3031"
+      labels:
+        app: flux
+        component: weave-flux
+    spec:
+      serviceAccountName: flux
+      volumes:
+        - name: git-key
+          secret:
+            secretName: flux-git-deploy
+            defaultMode: 0400
+        - name: git-keygen
+          emptyDir:
+            medium: Memory
+      containers:
+        - name: flux
+          image: quay.io/weaveworks/flux:master-5f0e9292
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          ports:
+            - containerPort: 3030
+            - containerPort: 3031
+          volumeMounts:
+            - name: git-key
+              mountPath: /etc/fluxd/ssh
+              readOnly: true
+            - name: git-keygen
+              mountPath: /var/fluxd/keygen
+          args:
+            - --memcached-service=
+            - --ssh-keygen-dir=/var/fluxd/keygen
+            - --git-url=git@github.com:zeeZ/locked-down-flux.git
+            - --git-branch=deploy
+            - --git-path=helloworld-flux/
+            - --git-ci-skip
+            - --k8s-namespace-whitelist=helloworld
+            - --listen-metrics=:3031
