@@ -24,12 +24,12 @@ spec:
         component: echoserver
     spec:
       containers:
-        - name: echoserver
-          image: gcr.io/google-samples/hello-app:1.0
-          ports:
-            - name: web
-              containerPort: 8080
-              protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
+      - name: echoserver
+        image: gcr.io/google-samples/hello-app:2.0
+        ports:
+        - name: web
+          containerPort: 8080
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
       automountServiceAccountToken: false
