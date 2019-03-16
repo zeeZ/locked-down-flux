@@ -9,6 +9,7 @@ metadata:
     component: echoserver
   annotations:
     flux.weave.works/tag.echoserver: semver:*
+    flux.weave.works/automated: 'true'
 spec:
   replicas: 1
   selector:
